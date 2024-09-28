@@ -3,40 +3,35 @@
 <head>
     <meta charset="UTF-8" />
     <title>Melon List</title>
-    <style>
-        body {
-            width: 400px;
-            margin: 0 auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        form {margin-bottom:10px}
-        form input{width: 100%;}
-    </style>
+    <link https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap-grid.min.css>
 </head>
 <body>
-    <h1>Melon List</h1>
-    <form action="" method="get" autocomplete="off">
+<div class="container">
+    <h1 class="fw-bold">Melon List</h1>
+    <form action="" method="get" autocomplete="off" class="my-4">
         <input type="text" name="query" placeholder="검색어를 입력해주세요" autofocus
-        value="{{query}}">
+        value="{{query}}" class "form-control">
     </form>
-    <table>
+    <table class="table table-hover table-bordered" id="song-list-table">
+
         <thead>
             <tr><th>곡명</th><th>가수</th></tr>
         </thead>
         <tbody>
-            {% for song in song_list %}
-                <tr>
-                    <td>{{ song.곡명 }}</td>
-                    <td>{{ song.가수 }}</td>
-                </tr>
-            {% endfor %}
         </tbody>
     </table>
+    {{song_list_data|json_script:"song-list-json"}}
+    <script>
+        const songlist=JSON.parse(document.querySelector("#song-list-json").textContent);
+        songlist.forEach(song=> {
+            const tr=document.createElement("tr");
+            tr.innerHTML=`
+            <td>${song['곡명']}</td>
+            <td>${song['가수']}</td>
+            `;
+            document.querySelector("#song-list-table tbody").append(tr);
+        });
+    </script>
+</div>
 </body>
 </html>
