@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <title>Melon List</title>
     <link https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap-grid.min.css>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.16/babel.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -13,24 +16,39 @@
         value="{{query}}" class "form-control">
     </form>
     <table class="table table-hover table-bordered" id="song-list-table">
-
         <thead>
             <tr><th>곡명</th><th>가수</th></tr>
         </thead>
         <tbody>
         </tbody>
     </table>
-    {{song_list_data|json_script:"song-list-json"}}
-    <script>
-        const songlist=JSON.parse(document.querySelector("#song-list-json").textContent);
-        songlist.forEach(song=> {
-            const tr=document.createElement("tr");
-            tr.innerHTML=`
-            <td>${song['곡명']}</td>
-            <td>${song['가수']}</td>
-            `;
-            document.querySelector("#song-list-table tbody").append(tr);
-        });
+    <script type="text/babel">
+        function SongList(){
+            const [songList,setSongList]=React.useState([]);
+            React.useEffect(()=>{
+                fetch("/api/song-list.json")
+            .then(response=>response.json())
+            .then(_songList=>{
+                setSongList(_songList);
+            })
+            },[]);
+            return (
+            <>
+                {songList.map(song=>{
+                    return (
+                        <tr key={song.id}>
+                        <td>{song['곡명']}</td>
+                        <td>{song['가수']}</td>
+                        </tr>
+                    )
+            })}
+            </>
+        )
+        }
+        ReactDOM.render(
+            <SongList />,
+            document.querySelector("#song-list-table tbody")
+        )
     </script>
 </div>
 </body>

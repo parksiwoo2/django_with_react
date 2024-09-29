@@ -10,6 +10,7 @@ from django.urls import path
 from django.db import connection
 from django.db import models
 from django.db.models import Q
+from django.http import JsonResponse
 settings.configure(
     ROOT_URLCONF=__name__,
     DEBUG=True,
@@ -42,6 +43,16 @@ class Song(models.Model):
         db_table="songs"
         app_label="melon"
 def index(request):
+    """query=request.GET.get("query","").strip()
+    song_list=Song.objects.all() #query set
+    if query:
+        song_list=song_list.filter(
+            Q(곡명__icontains=query) | Q(가수__icontains=query)
+        )
+    song_list_data=list(song_list.values())"""
+    return render(request, "index.html")
+
+def song_list_api(request):
     query=request.GET.get("query","").strip()
     song_list=Song.objects.all() #query set
     if query:
@@ -49,9 +60,15 @@ def index(request):
             Q(곡명__icontains=query) | Q(가수__icontains=query)
         )
     song_list_data=list(song_list.values())
-    return render(request, "index.html", {"song_list_data": song_list_data, "query":query})
+    return JsonResponse(
+        song_list_data,
+        safe=False,
+        json_dumps_params={"ensure_ascii":False},
+        content_type="application/json; charset=utf-8",
+    )
 urlpatterns = [
     path("", index),
+    path("api/song-list.json",song_list_api)
 ]
 """def get_song(query: str):
     cursor=connection.cursor()
