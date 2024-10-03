@@ -6,7 +6,7 @@ from urllib.parse import quote
 
 @dataclass
 class Song:
-    id: str
+    melon_uid: str
     rank: int
     album_name:str
     name:str
@@ -14,13 +14,13 @@ class Song:
     cover_url:str
     lyrics: str
     genre:str
-    relaese_date:date
+    release_date:date
     link_count:int
 
     @property
     def melon_detail_url(self)->str:
         melon_uid=quote(self.melon_uid)
-        return f"https://www.melon.com/song/detail.htm?songId={melon_uid}"
+        return f"https://www.melon.com/song/detail.htm?albumId={melon_uid}"
     @property
     def youtube_search_url(self)->str:
         search_query=quote(f"{self.name}, {self.artist_name}")
