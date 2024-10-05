@@ -3,30 +3,33 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Dict
 from urllib.parse import quote
+from django.db import models
 
-@dataclass
-class Song:
-    melon_uid: str
-    rank: int
-    album_name:str
-    name:str
-    artist_name:str
-    cover_url:str
-    lyrics: str
-    genre:str
-    release_date:date
-    link_count:int
+
+class Song(models.Model):
+    melon_uid = models.CharField(max_length=20, unique=True)
+    rank = models.PositiveSmallIntegerField()
+    album_name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    artist_name = models.CharField(max_length=100)
+    cover_url = models.URLField()
+    lyrics = models.TextField()
+    genre = models.CharField(max_length=100)
+    release_date = models.DateField()
+    like_count = models.PositiveBigIntegerField()
 
     @property
-    def melon_detail_url(self)->str:
-        melon_uid=quote(self.melon_uid)
+    def melon_detail_url(self) -> str:
+        melon_uid = quote(self.melon_uid)
         return f"https://www.melon.com/song/detail.htm?albumId={melon_uid}"
+
     @property
-    def youtube_search_url(self)->str:
-        search_query=quote(f"{self.name}, {self.artist_name}")
+    def youtube_search_url(self) -> str:
+        search_query = quote(f"{self.name}, {self.artist_name}")
         return f"https://www.youtube.com/results?search_query={search_query}"
+
     @classmethod
-    def from_dict(cls,data:Dict)->Song:
+    def from_dict(cls, data: Dict) -> Song:
         return cls(
             melon_uid=data.get("곡일련번호"),
             rank=int(data.get("순위")),
@@ -37,5 +40,5 @@ class Song:
             lyrics=data.get("가사"),
             genre=data.get("장르"),
             release_date=date.fromisoformat(data.get("발매일")),
-            link_count=int(data.get("좋아요")),
+            like_count=int(data.get("좋아요")),
         )
