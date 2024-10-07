@@ -5,7 +5,8 @@ from django.shortcuts import render,get_object_or_404
 from hottrack.models import Song
 from django.db.models import QuerySet, Q
 from hottrack.utils.cover import make_cover_image
-
+from io import BytesIO
+import pandas as pd
 def index(request: HttpRequest) -> HttpResponse:
     query = request.GET.get("query", "").strip()
     # melon_chart_url = "hottrack/melon-20230910.json"
@@ -48,4 +49,12 @@ def cover_png(request, pk):
     # image.save("image.png")
     response = HttpResponse(content_type="image/png")
     cover_image.save(response, format="png")
+    return response
+def export_csv(request: HttpRequest)-> HttpResponse:
+    song_qs=Song.objects.all()
+    df=pd.DataFrame(data=song_qs.values())
+    export_file=BytesIO()
+    df.to_csv(path_or_buf=export_file,index=False,encoding="utf-8-sig")
+    response=HttpResponse(content=export_file.getvalue(),content_type="text/csv")
+    response["Content-Disposition"]='attachment;filename="hottrack.csv"'
     return response
