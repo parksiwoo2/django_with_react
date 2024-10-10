@@ -1,6 +1,6 @@
 import json
 from urllib.request import urlopen
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render,get_object_or_404
 from hottrack.models import Song
 from django.db.models import QuerySet, Q
@@ -50,11 +50,20 @@ def cover_png(request, pk):
     response = HttpResponse(content_type="image/png")
     cover_image.save(response, format="png")
     return response
-def export_csv(request: HttpRequest)-> HttpResponse:
+def export(request: HttpRequest,format)-> HttpResponse:
     song_qs=Song.objects.all()
     df=pd.DataFrame(data=song_qs.values())
     export_file=BytesIO()
-    df.to_csv(path_or_buf=export_file,index=False,encoding="utf-8-sig")
-    response=HttpResponse(content=export_file.getvalue(),content_type="text/csv")
-    response["Content-Disposition"]='attachment;filename="hottrack.csv"'
+    if format=="csv":
+        content_type="text/csv"
+        filename="hottrack.csv"
+        df.to_csv(path_or_buf=export_file,index=False,encoding="utf-8-sig")
+    elif format=="xlsx":
+        content_type="application/vnd.ms-excel"
+        filename="hottrack.xlsx"
+        df.to_excel(excel_writer=export_file,index=False)
+    else:
+        return HttpResponseBadRequest(f"Invalid format:{format}")
+    response=HttpResponse(content=export_file.getvalue(),content_type=content_type)
+    response["Content-Disposition"]='attachment;filename="{}"'.format(filename)
     return response
