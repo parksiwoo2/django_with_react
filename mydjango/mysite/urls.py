@@ -7,6 +7,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path(route="hottrack/", view=include("hottrack.urls")),
     path(route="", view=lambda request: redirect("/hottrack/")),
+    path(route="coreapp/", view=include("coreapp.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += [

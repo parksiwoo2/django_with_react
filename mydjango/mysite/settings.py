@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "hottrack",
+    "coreapp",
 ]
 if DEBUG:
     INSTALLED_APPS += [
