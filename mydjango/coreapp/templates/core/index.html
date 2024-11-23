@@ -1,21 +1,30 @@
+{%load django_bootstrap5%}
 <!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    {%bootstrap_css%}
+    {%bootstrap_javascript%}
+  
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
-<body>
-  <h1>core</h1>
-{%if messages%}
-  {%for message in messages%}
-    <div>
-      [{{message.level_tag}}]
-      {{message.message}}
-    </div>
-  {%endfor%}
-{%endif%}
-</body>
+  <body>
+    <h1>core</h1>
+    {% if messages %}
+    <script>
+        {% for message in messages %}
+            Toastify({
+              text: "{{ message }}",
+              duration: 3000,
+            }).showToast();
+        {% endfor %}
+    </script>
+  {% endif %}
+  </body>
+
 </html>

@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_bootstrap5",
     "hottrack",
     "coreapp",
 ]
@@ -118,6 +119,8 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
+from django.contrib.messages import constants as messages_constants #noqa
+if DEBUG:
+    MESSAGE_LEVEL=messages_constants.DEBUG
 
 INTERNAL_IPS = ["127.0.0.1"]
